@@ -14,7 +14,7 @@ deploy:
     on:
       branch: develop
       jdk: oraclejdk8
-      condition: type != pull_request AND fork = false
+      condition: type != pull_request && fork = false
       
   # RELEASES from master & jdk8
   - provider: script
@@ -23,4 +23,4 @@ deploy:
     on:
       branch: master
       jdk: oraclejdk8
-      condition: type != pull_request AND fork = false
+      condition: type != pull_request && fork = false
