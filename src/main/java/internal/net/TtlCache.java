@@ -41,7 +41,7 @@ public final class TtlCache<K, V> {
                 .minTtlInMillis(10)
                 .maxTtlInMillis(1000 * 60)
                 .ttlFactor(10)
-                .cache(new ConcurrentHashMap<>())
+                .storage(new ConcurrentHashMap<>())
                 .clock(System::currentTimeMillis)
                 .onEvent(TtlCache::logEvent)
                 .build();
@@ -50,7 +50,7 @@ public final class TtlCache<K, V> {
     private final long minTtlInMillis;
     private final long maxTtlInMillis;
     private final long ttlFactor;
-    private final ConcurrentMap<K, Entry<V>> cache;
+    private final ConcurrentMap<K, Entry<V>> storage;
     private final LongSupplier clock;
     private final BiConsumer<? super K, Event> onEvent;
     private final int evictThreshold = 1000;
@@ -58,7 +58,7 @@ public final class TtlCache<K, V> {
     @Nullable
     public V get(@Nonnull K key, @Nonnull Function<K, V> loader) {
         long now = clock.getAsLong();
-        Entry<V> entry = cache.get(key);
+        Entry<V> entry = storage.get(key);
         if (entry != null) {
             if (!entry.hasExpired(now)) {
                 onEvent.accept(key, Event.HIT);
@@ -77,22 +77,22 @@ public final class TtlCache<K, V> {
         if (ttl >= minTtlInMillis) {
             onEvent.accept(key, miss ? Event.MISS_SLOW : Event.EXP_SLOW);
             evictExpiredEntries(after);
-            cache.put(key, new Entry<>(after + Math.min(maxTtlInMillis, ttl), result));
+            storage.put(key, new Entry<>(after + Math.min(maxTtlInMillis, ttl), result));
         } else {
             onEvent.accept(key, miss ? Event.MISS_FAST : Event.EXP_FAST);
             if (!miss) {
-                cache.remove(key);
+                storage.remove(key);
             }
         }
         return result;
     }
 
     private void evictExpiredEntries(long currentTimeInMillis) {
-        if (cache.size() > evictThreshold) {
-            cache.entrySet()
+        if (storage.size() > evictThreshold) {
+            storage.entrySet()
                     .stream()
                     .filter(o -> o.getValue().hasExpired(currentTimeInMillis))
-                    .forEach(cache::remove);
+                    .forEach(storage::remove);
         }
     }
 

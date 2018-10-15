@@ -35,7 +35,7 @@ public class TtlCacheTest {
     @Test
     @SuppressWarnings("null")
     public void test() {
-        ConcurrentMap<String, TtlCache.Entry<Integer>> map = new ConcurrentHashMap<>();
+        ConcurrentMap<String, TtlCache.Entry<Integer>> storage = new ConcurrentHashMap<>();
         AtomicLong clock = new AtomicLong(0);
         AtomicInteger counter = new AtomicInteger();
         AtomicReference<TtlCache.Event> event = new AtomicReference<>();
@@ -46,7 +46,7 @@ public class TtlCacheTest {
                 .minTtlInMillis(10)
                 .maxTtlInMillis(1000)
                 .ttlFactor(1)
-                .cache(map)
+                .storage(storage)
                 .clock(clock::get)
                 .onEvent((k, e) -> event.set(e))
                 .build();
@@ -62,40 +62,44 @@ public class TtlCacheTest {
         duration.set(5);
         assertThat(cache.get("a", loader)).isEqualTo(1);
         assertThat(event).hasValue(TtlCache.Event.MISS_FAST);
-        assertThat(map).doesNotContainKey("a");
+        assertThat(storage).doesNotContainKey("a");
         assertThat(clock).hasValue(5);
 
         duration.set(10);
         assertThat(cache.get("a", loader)).isEqualTo(2);
         assertThat(event).hasValue(TtlCache.Event.MISS_SLOW);
-        assertThat(map).containsKey("a");
+        assertThat(storage).containsKey("a");
         assertThat(clock).hasValue(15);
 
         duration.set(10);
         assertThat(cache.get("a", loader)).isEqualTo(2);
         assertThat(event).hasValue(TtlCache.Event.HIT);
-        assertThat(map).containsKey("a");
+        assertThat(storage).containsKey("a");
         assertThat(clock).hasValue(15);
 
         clock.addAndGet(1000);
         duration.set(10);
         assertThat(cache.get("a", loader)).isEqualTo(3);
         assertThat(event).hasValue(TtlCache.Event.EXP_SLOW);
-        assertThat(map).containsKey("a");
+        assertThat(storage).containsKey("a");
         assertThat(clock).hasValue(1025);
 
         clock.addAndGet(1000);
         duration.set(5);
         assertThat(cache.get("a", loader)).isEqualTo(4);
         assertThat(event).hasValue(TtlCache.Event.EXP_FAST);
-        assertThat(map).doesNotContainKey("a");
+        assertThat(storage).doesNotContainKey("a");
         assertThat(clock).hasValue(2030);
     }
 
     @Test
     public void testLog() {
         try (LogCollector logs = LogCollector.of(TtlCache.class)) {
-            TtlCache.of().get("hello", o -> "world");
+            TtlCache.of()
+                    .toBuilder()
+                    .clock(() -> 0)
+                    .build()
+                    .get("hello", o -> "world");
             assertThat(logs)
                     .hasSize(1)
                     .element(0)
