@@ -32,7 +32,7 @@
         <jacoco-maven-plugin.version>0.8.2</jacoco-maven-plugin.version>
 
         <!-- dev support -->
-        <lombok.version>edge-SNAPSHOT</lombok.version>
+        <lombok.version>1.16.18</lombok.version>
         <netbeans.version>RELEASE82</netbeans.version>
         <junit.version>4.12</junit.version>
         <assertj-core.version>3.11.1</assertj-core.version>
