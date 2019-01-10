@@ -16,7 +16,6 @@
  */
 package internal.net;
 
-import com.github.tuupertunut.powershelllibjava.PowerShell;
 import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
@@ -34,7 +33,7 @@ public final class SinglePowerShell {
 
     private final ReentrantLock lock;
     private final Semaphore fallbackInstances;
-    private PowerShell ps;
+    private FixedPowerShell ps;
 
     public SinglePowerShell() {
         this.lock = new ReentrantLock();
@@ -62,7 +61,7 @@ public final class SinglePowerShell {
     private String execOnMain(String cmd) throws IOException, PowerShellExecutionException {
         try {
             if (ps == null) {
-                ps = PowerShell.open();
+                ps = FixedPowerShell.open();
             } else {
             }
             return ps.executeCommands(cmd);
@@ -74,7 +73,7 @@ public final class SinglePowerShell {
 
     private String execOnFallback(String cmd) throws IOException, PowerShellExecutionException {
         if (fallbackInstances.tryAcquire()) {
-            try (PowerShell temp = PowerShell.open()) {
+            try (FixedPowerShell temp = FixedPowerShell.open()) {
                 return temp.executeCommands(cmd);
             } finally {
                 fallbackInstances.release();
