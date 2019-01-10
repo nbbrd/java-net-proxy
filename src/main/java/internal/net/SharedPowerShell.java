@@ -21,12 +21,14 @@ import java.io.IOException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  *
  * @author Philippe Charles
  */
-public final class SinglePowerShell {
+@ThreadSafe
+public final class SharedPowerShell {
 
     private static final long MAIN_TIMEOUT_MILLIS = 1000 * 10;
     private static final int FALLBACK_MAX_INSTANCES = 3;
@@ -35,7 +37,7 @@ public final class SinglePowerShell {
     private final Semaphore fallbackInstances;
     private FixedPowerShell ps;
 
-    public SinglePowerShell() {
+    public SharedPowerShell() {
         this.lock = new ReentrantLock();
         this.fallbackInstances = new Semaphore(FALLBACK_MAX_INSTANCES);
         this.ps = null;

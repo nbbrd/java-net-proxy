@@ -112,7 +112,7 @@ public final class WinPowerShellProxySelector implements SystemProxySelector.Spi
 
     public static final class GetSystemWebProxyCommand implements Function<URI, String> {
 
-        private final SinglePowerShell ps = new SinglePowerShell();
+        private final SharedPowerShell ps = new SharedPowerShell();
 
         @Override
         public String apply(URI uri) {
