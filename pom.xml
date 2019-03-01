@@ -35,7 +35,7 @@
         <lombok.version>1.18.6</lombok.version>
         <netbeans.version>RELEASE82</netbeans.version>
         <junit.version>4.12</junit.version>
-        <assertj-core.version>3.12.0</assertj-core.version>
+        <assertj-core.version>3.12.1</assertj-core.version>
         <jsr305.version>3.0.2</jsr305.version>
 
         <!-- main dependencies -->
