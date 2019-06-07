@@ -30,9 +30,9 @@ import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -43,7 +43,7 @@ import javax.annotation.concurrent.ThreadSafe;
 @lombok.Builder(builderClassName = "Builder", toBuilder = true)
 public final class SystemProxySelector extends ProxySelector {
 
-    @Nonnull
+    @NonNull
     public static SystemProxySelector ofServiceLoader() {
         List<Spi> providers = StreamSupport
                 .stream(ServiceLoader.load(Spi.class).spliterator(), false)
@@ -120,6 +120,6 @@ public final class SystemProxySelector extends ProxySelector {
     public interface Spi {
 
         @Nullable
-        Proxy getProxyOrNull(@Nonnull URI uri);
+        Proxy getProxyOrNull(@NonNull URI uri);
     }
 }

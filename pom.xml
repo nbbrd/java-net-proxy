@@ -36,7 +36,6 @@
         <netbeans.version>RELEASE82</netbeans.version>
         <junit.version>4.12</junit.version>
         <assertj-core.version>3.12.2</assertj-core.version>
-        <jsr305.version>3.0.2</jsr305.version>
 
         <!-- main dependencies -->
         <powershell-lib-java.version>1.1.1</powershell-lib-java.version>
@@ -57,9 +56,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>     
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>${jsr305.version}</version>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+            <version>2.8.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.icroco</groupId>
+            <artifactId>jcip-annotations</artifactId>
+            <version>1.1.0</version>
             <scope>provided</scope>
         </dependency>
         
@@ -183,13 +188,6 @@
         <repository>
             <id>netbeans</id>
             <url>http://bits.netbeans.org/maven2/</url>
-        </repository>
-        <repository>
-            <id>projectlombok.org</id>
-            <url>https://projectlombok.org/edge-releases</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
         </repository>
     </repositories>
 </project>

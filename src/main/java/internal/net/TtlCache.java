@@ -22,8 +22,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.LongSupplier;
 import java.util.logging.Level;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 @lombok.Builder(builderClassName = "Builder", toBuilder = true)
 public final class TtlCache<K, V> {
 
-    @Nonnull
+    @NonNull
     public static <K, V> TtlCache of() {
         return builder()
                 .minTtlInMillis(10)
@@ -56,7 +56,7 @@ public final class TtlCache<K, V> {
     private final int evictThreshold = 1000;
 
     @Nullable
-    public V get(@Nonnull K key, @Nonnull Function<K, V> loader) {
+    public V get(@NonNull K key, @NonNull Function<K, V> loader) {
         long now = clock.getAsLong();
         Entry<V> entry = storage.get(key);
         if (entry != null) {
