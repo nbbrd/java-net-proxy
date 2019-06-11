@@ -33,7 +33,6 @@
 
         <!-- dev support -->
         <lombok.version>1.18.8</lombok.version>
-        <netbeans.version>RELEASE82</netbeans.version>
         <junit.version>4.12</junit.version>
         <assertj-core.version>3.12.2</assertj-core.version>
 
@@ -52,7 +51,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util-lookup</artifactId>
-            <version>${netbeans.version}</version>
+            <version>RELEASE110</version>
             <scope>provided</scope>
         </dependency>
         <dependency>     
@@ -183,11 +182,4 @@
             </build>
         </profile>
     </profiles>
-    
-    <repositories>
-        <repository>
-            <id>netbeans</id>
-            <url>http://bits.netbeans.org/maven2/</url>
-        </repository>
-    </repositories>
 </project>
