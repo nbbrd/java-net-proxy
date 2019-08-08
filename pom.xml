@@ -107,7 +107,7 @@
                 <dependency>
                     <groupId>be.nbb.rd</groupId>
                     <artifactId>java-service-annotation</artifactId>
-                    <version>1.0.0</version>
+                    <version>1.0.1</version>
                     <scope>provided</scope>
                 </dependency>
             </dependencies>
