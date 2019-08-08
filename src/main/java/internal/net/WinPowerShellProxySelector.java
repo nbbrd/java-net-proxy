@@ -29,13 +29,13 @@ import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import lombok.AccessLevel;
 import nbbrd.net.SystemProxySelector;
-import org.openide.util.lookup.ServiceProvider;
+import nbbrd.service.ServiceProvider;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SystemProxySelector.Spi.class)
+@ServiceProvider(SystemProxySelector.Spi.class)
 @lombok.extern.java.Log
 @lombok.AllArgsConstructor(access = AccessLevel.PACKAGE)
 public final class WinPowerShellProxySelector implements SystemProxySelector.Spi {
