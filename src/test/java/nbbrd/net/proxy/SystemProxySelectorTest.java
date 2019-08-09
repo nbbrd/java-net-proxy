@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package nbbrd.net;
+package nbbrd.net.proxy;
 
 import _test.LogCollector;
 import java.io.IOException;

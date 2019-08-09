@@ -22,7 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Stream;
-import nbbrd.net.SystemProxySelector;
+import nbbrd.net.proxy.SystemProxySelector;
 
 /**
  *

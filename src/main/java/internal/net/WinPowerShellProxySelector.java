@@ -28,7 +28,7 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import lombok.AccessLevel;
-import nbbrd.net.SystemProxySelector;
+import nbbrd.net.proxy.SystemProxySelector;
 import nbbrd.service.ServiceProvider;
 
 /**

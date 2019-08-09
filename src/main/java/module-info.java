@@ -14,22 +14,18 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.net;
 
-import java.util.ServiceLoader;
-import nbbrd.net.proxy.SystemProxySelector;
-import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.Test;
+module nbbrd.net.proxy {
+    requires static lombok;
+    requires static nbbrd.service;
+    requires static org.checkerframework.checker.qual;
+    requires static jcip.annotations;
 
-/**
- *
- * @author Philippe Charles
- */
-public class WinPowerShellProxySelectorTest {
+    requires java.logging;
+    requires com.github.tuupertunut.powershelllibjava;
 
-    @Test
-    public void testRegistration() {
-        assertThat(ServiceLoader.load(SystemProxySelector.Spi.class))
-                .anyMatch(WinPowerShellProxySelector.class::isInstance);
-    }
+    exports nbbrd.net.proxy;
+
+    provides nbbrd.net.proxy.SystemProxySelector.Spi with
+            internal.net.WinPowerShellProxySelector;
 }
