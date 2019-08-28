@@ -14,26 +14,34 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.net;
+package _test;
 
-import java.util.ServiceLoader;
-import nbbrd.net.proxy.SystemProxySelector;
-import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.Test;
+import java.io.IOException;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author Philippe Charles
  */
-public class WinPowerShellProxySelectorTest {
+@lombok.Builder
+public final class ProxyMap extends ProxySelector {
 
-    @Test
-    public void testRegistration() {
-        assertThat(ServiceLoader.load(SystemProxySelector.Spi.class))
-                .anyMatch(WinPowerShellProxySelector.class::isInstance);
+    @lombok.Singular
+    private final Map<URI, Proxy> proxies;
 
-        assertThat(new SystemProxySpiLoader().get())
-                .hasSize(1)
-                .allMatch(FailsafeSystemProxySpi.class::isInstance);
+    @Override
+    public List<Proxy> select(URI uri) {
+        Proxy result = proxies.get(uri);
+        return result != null ? Collections.singletonList(result) : Collections.emptyList();
+    }
+
+    @Override
+    public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
     }
 }

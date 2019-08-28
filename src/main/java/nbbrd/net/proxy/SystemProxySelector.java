@@ -16,6 +16,8 @@
  */
 package nbbrd.net.proxy;
 
+import internal.net.SystemProxySpiLoader;
+import internal.net.SystemProxySpiProc;
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.ProxySelector;
@@ -24,12 +26,9 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.ServiceLoader;
-import java.util.function.BiConsumer;
 import java.util.function.UnaryOperator;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import nbbrd.service.Quantifier;
+import nbbrd.service.ServiceDefinition;
 import net.jcip.annotations.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -39,20 +38,15 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @author Philippe Charles
  */
 @ThreadSafe
-@lombok.extern.java.Log
 @lombok.Builder(builderClassName = "Builder", toBuilder = true)
 public final class SystemProxySelector extends ProxySelector {
 
     @NonNull
     public static SystemProxySelector ofServiceLoader() {
-        List<Spi> providers = StreamSupport
-                .stream(ServiceLoader.load(Spi.class).spliterator(), false)
-                .collect(Collectors.toList());
         return builder()
-                .providers(providers)
+                .providers(new SystemProxySpiLoader().get())
                 .systemProperties(System::getProperty)
                 .fallback(ProxySelector.getDefault())
-                .onUnexpectedError(SystemProxySelector::logUnexpectedError)
                 .build();
     }
 
@@ -65,9 +59,6 @@ public final class SystemProxySelector extends ProxySelector {
     @lombok.NonNull
     private final ProxySelector fallback;
 
-    @lombok.NonNull
-    private final BiConsumer<? super String, ? super RuntimeException> onUnexpectedError;
-
     @Override
     public List<Proxy> select(URI uri) {
         if (uri == null) {
@@ -77,7 +68,7 @@ public final class SystemProxySelector extends ProxySelector {
             return fallback.select(uri);
         }
         return providers.stream()
-                .map(o -> tryGetProxyOrNull(o, uri))
+                .map(provider -> provider.getProxyOrNull(uri))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .map(Collections::singletonList)
@@ -87,15 +78,6 @@ public final class SystemProxySelector extends ProxySelector {
     @Override
     public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
         fallback.connectFailed(uri, sa, ioe);
-    }
-
-    private Proxy tryGetProxyOrNull(Spi o, URI uri) {
-        try {
-            return o.getProxyOrNull(uri);
-        } catch (RuntimeException ex) {
-            onUnexpectedError.accept("While calling 'getProxyOrNull' on '" + o + "'", ex);
-            return null;
-        }
     }
 
     private boolean hasStaticProxyProperties() {
@@ -110,13 +92,11 @@ public final class SystemProxySelector extends ProxySelector {
         return systemProperties.apply(property) != null;
     }
 
-    private static void logUnexpectedError(String msg, RuntimeException ex) {
-        if (log.isLoggable(Level.WARNING)) {
-            log.log(Level.WARNING, msg, ex);
-        }
-    }
-
     @ThreadSafe
+    @ServiceDefinition(
+            quantifier = Quantifier.MULTIPLE,
+            preprocessor = SystemProxySpiProc.class,
+            loaderName = "internal.net.SystemProxySpiLoader")
     public interface Spi {
 
         @Nullable

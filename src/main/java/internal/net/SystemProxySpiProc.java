@@ -14,20 +14,22 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
+package internal.net;
 
-module nbbrd.net.proxy {
-    requires static lombok;
-    requires static nbbrd.service;
-    requires static org.checkerframework.checker.qual;
-    requires static jcip.annotations;
+import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
+import nbbrd.net.proxy.SystemProxySelector;
 
-    requires java.logging;
-    requires com.github.tuupertunut.powershelllibjava;
+/**
+ *
+ * @author Philippe Charles
+ */
+public enum SystemProxySpiProc implements UnaryOperator<Stream<SystemProxySelector.Spi>> {
 
-    exports nbbrd.net.proxy;
+    INSTANCE;
 
-    provides nbbrd.net.proxy.SystemProxySelector.Spi with
-            internal.net.WinPowerShellProxySelector;
-    
-    uses nbbrd.net.proxy.SystemProxySelector.Spi;
+    @Override
+    public Stream<SystemProxySelector.Spi> apply(Stream<SystemProxySelector.Spi> t) {
+        return t.map(FailsafeSystemProxySpi::wrap);
+    }
 }
