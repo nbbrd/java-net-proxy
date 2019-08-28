@@ -16,7 +16,7 @@
  */
 package _demo;
 
-import internal.net.WinPowerShellProxySelector;
+import internal.net.proxy.x.WinPowerShellProxySelector;
 import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;

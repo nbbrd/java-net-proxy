@@ -16,7 +16,7 @@
  */
 package _demo;
 
-import internal.net.SharedPowerShell;
+import internal.net.proxy.x.SharedPowerShell;
 import java.util.List;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;

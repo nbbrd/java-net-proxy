@@ -27,7 +27,7 @@ module nbbrd.net.proxy {
     exports nbbrd.net.proxy;
 
     provides nbbrd.net.proxy.SystemProxySelector.Spi with
-            internal.net.WinPowerShellProxySelector;
-    
+            internal.net.proxy.x.WinPowerShellProxySelector;
+
     uses nbbrd.net.proxy.SystemProxySelector.Spi;
 }

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package internal.net;
+package internal.net.proxy.x;
 
 import com.github.tuupertunut.powershelllibjava.AsyncReaderRecorder;
 import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;
