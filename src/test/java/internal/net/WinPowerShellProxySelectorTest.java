@@ -31,9 +31,5 @@ public class WinPowerShellProxySelectorTest {
     public void testRegistration() {
         assertThat(ServiceLoader.load(SystemProxySelector.Spi.class))
                 .anyMatch(WinPowerShellProxySelector.class::isInstance);
-
-        assertThat(new SystemProxySpiLoader().get())
-                .hasSize(1)
-                .allMatch(FailsafeSystemProxySpi.class::isInstance);
     }
 }

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.net;
+package internal.net.proxy;
 
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
