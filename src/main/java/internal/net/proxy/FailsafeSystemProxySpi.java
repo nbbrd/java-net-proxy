@@ -29,9 +29,9 @@ import nbbrd.net.proxy.SystemProxySelector;
  */
 @lombok.extern.java.Log
 @lombok.AllArgsConstructor
-final class FailsafeSystemProxySpi implements SystemProxySelector.Spi {
+public final class FailsafeSystemProxySpi implements SystemProxySelector.Spi {
 
-    static SystemProxySelector.Spi wrap(SystemProxySelector.Spi delegate) {
+    public static SystemProxySelector.Spi wrap(SystemProxySelector.Spi delegate) {
         return new FailsafeSystemProxySpi(delegate, FailsafeSystemProxySpi::logUnexpectedError);
     }
 

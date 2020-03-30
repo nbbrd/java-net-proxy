@@ -16,8 +16,8 @@
  */
 package nbbrd.net.proxy;
 
+import internal.net.proxy.FailsafeSystemProxySpi;
 import internal.net.proxy.SystemProxySpiLoader;
-import internal.net.proxy.SystemProxySpiProc;
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.ProxySelector;
@@ -95,7 +95,7 @@ public final class SystemProxySelector extends ProxySelector {
     @ThreadSafe
     @ServiceDefinition(
             quantifier = Quantifier.MULTIPLE,
-            preprocessor = SystemProxySpiProc.class,
+            wrapper = FailsafeSystemProxySpi.class,
             loaderName = "internal.net.proxy.SystemProxySpiLoader")
     public interface Spi {
 
