@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 National Bank of Belgium
+ * Copyright 2019 National Bank of Belgium
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -16,17 +16,19 @@
  */
 package _demo;
 
-import internal.net.proxy.x.WinPowerShellProxySelector;
 import java.net.Proxy;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.stream.Stream;
+import nbbrd.net.proxy.SystemProxySelector;
 
 /**
  *
  * @author Philippe Charles
  */
-public class WinParallelDemo {
+public class SystemProxySelectorDemo {
 
     public static void main(String[] args) throws URISyntaxException {
         URI[] x = {
@@ -48,12 +50,14 @@ public class WinParallelDemo {
             new URI("http://sdmx.istat.it")
         };
 
-        WinPowerShellProxySelector proxySelector = new WinPowerShellProxySelector();
-        proxySelector.getProxyOrNull(new URI("http://localhost"));
-        Stream.of(x).parallel().forEach(o -> {
-            long start = System.currentTimeMillis();
-            Proxy p = proxySelector.getProxyOrNull(o);
-            System.out.println(o + " >>> " + p + " >>> " + (System.currentTimeMillis() - start));
-        });
+        SystemProxySelector proxySelector = SystemProxySelector.ofServiceLoader();
+        Stream.of(x).parallel().forEach(uri -> fetchAndPrint(uri, proxySelector));
+    }
+
+    private static void fetchAndPrint(URI uri, ProxySelector proxySelector) {
+        long start = System.currentTimeMillis();
+        List<Proxy> proxies = proxySelector.select(uri);
+        long stop = System.currentTimeMillis();
+        System.out.println(uri + " >>> " + proxies + " >>> " + (stop - start));
     }
 }

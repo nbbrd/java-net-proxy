@@ -16,7 +16,7 @@
  */
 package _demo;
 
-import internal.net.SinglePowerShell;
+import internal.net.proxy.x.SharedPowerShell;
 import java.util.List;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
@@ -26,7 +26,7 @@ import java.util.stream.IntStream;
  *
  * @author Philippe Charles
  */
-public class PowerShellDemo {
+public class SharedPowerShellDemo {
 
     public static void main(String[] args) throws Exception {
         List<String> cmds = IntStream.range(0, 10).mapToObj(i -> "echo " + i).collect(Collectors.toList());
@@ -38,7 +38,7 @@ public class PowerShellDemo {
     }
 
     private static ToLongFunction<String> newTimer() {
-        SinglePowerShell ps = new SinglePowerShell();
+        SharedPowerShell ps = new SharedPowerShell();
 //        try {
 //            ps.executeCommands("echo 'warming'");
 //        } catch (IOException | PowerShellExecutionException ex) {

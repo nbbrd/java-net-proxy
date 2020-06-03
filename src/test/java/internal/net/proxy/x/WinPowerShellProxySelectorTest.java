@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 National Bank of Belgium
+ * Copyright 2019 National Bank of Belgium
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,21 +14,22 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package _demo;
+package internal.net.proxy.x;
 
-import internal.net.proxy.x.WinPowerShellProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.ServiceLoader;
+import nbbrd.net.proxy.SystemProxySelector;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
 
 /**
  *
  * @author Philippe Charles
  */
-public final class WinMapDemo {
+public class WinPowerShellProxySelectorTest {
 
-    public static void main(String[] args) throws URISyntaxException {
-        URI uri = new URI("https://www.nbb.be");
-
-        System.out.println(new WinPowerShellProxySelector.GetSystemWebProxyCommand().apply(uri));
+    @Test
+    public void testRegistration() {
+        assertThat(ServiceLoader.load(SystemProxySelector.Spi.class))
+                .anyMatch(WinPowerShellProxySelector.class::isInstance);
     }
 }

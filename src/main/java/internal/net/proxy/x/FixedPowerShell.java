@@ -21,8 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.github.tuupertunut.powershelllibjava;
+package internal.net.proxy.x;
 
+import com.github.tuupertunut.powershelllibjava.AsyncReaderRecorder;
+import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.Closeable;
@@ -43,7 +45,7 @@ import java.util.concurrent.Executors;
  *
  * @author Tuupertunut
  */
-public class PowerShell implements Closeable {
+public class FixedPowerShell implements Closeable {
 
     private static final String DEFAULT_WIN_EXECUTABLE = "powershell";
     private static final String DEFAULT_CORE_EXECUTABLE = "pwsh";
@@ -64,7 +66,7 @@ public class PowerShell implements Closeable {
 
     private boolean closed;
 
-    private PowerShell(String psExecutable) throws IOException {
+    private FixedPowerShell(String psExecutable) throws IOException {
 
         psSession = createProcessBuilder(psExecutable).start();
 
@@ -73,10 +75,10 @@ public class PowerShell implements Closeable {
 
         outputRecorder = new AsyncReaderRecorder(commandOutput);
         errorOutputRecorder = new AsyncReaderRecorder(commandErrorOutput);
-        executor = Executors.newFixedThreadPool(2, r -> {
-            Thread result = Executors.defaultThreadFactory().newThread(r);
-            result.setDaemon(true);
-            return result;
+        executor = Executors.newFixedThreadPool(2, (Runnable r) -> {
+            Thread thread = Executors.defaultThreadFactory().newThread(r);
+            thread.setDaemon(true);
+            return thread;
         });
         executor.execute(outputRecorder);
         executor.execute(errorOutputRecorder);
@@ -107,7 +109,7 @@ public class PowerShell implements Closeable {
              *
              * -Command - : Read commands from standard input stream of the
              * process. */
-            return new ProcessBuilder("cmd", "/c", "chcp", "65001", ">", "NUL", "&", psExecutable, "-ExecutionPolicy", "Bypass", "-NoExit", "-Command", "-");
+            return new ProcessBuilder("cmd", "/c", "chcp 65001 > NUL", "&", psExecutable, "-ExecutionPolicy", "Bypass", "-NoExit", "-Command", "-");
         } else {
             return new ProcessBuilder(psExecutable, "-ExecutionPolicy", "Bypass", "-NoExit", "-Command", "-");
         }
@@ -135,8 +137,8 @@ public class PowerShell implements Closeable {
      * @return a new PowerShell session.
      * @throws IOException if an IOException occurred on process creation.
      */
-    public static PowerShell open() throws IOException {
-        return new PowerShell(getDefaultExecutable());
+    public static FixedPowerShell open() throws IOException {
+        return new FixedPowerShell(getDefaultExecutable());
     }
 
     /**
@@ -147,8 +149,8 @@ public class PowerShell implements Closeable {
      * @return a new PowerShell session.
      * @throws IOException if an IOException occurred on process creation.
      */
-    public static PowerShell open(String customExecutable) throws IOException {
-        return new PowerShell(customExecutable);
+    public static FixedPowerShell open(String customExecutable) throws IOException {
+        return new FixedPowerShell(customExecutable);
     }
 
     /**
@@ -159,6 +161,10 @@ public class PowerShell implements Closeable {
     public void close() {
         closed = true;
         if (commandInput != null) {
+
+            /* Sending a shutdown signal to PowerShell. */
+            commandInput.println("exit");
+
             commandInput.close();
         }
         if (executor != null) {
@@ -175,9 +181,6 @@ public class PowerShell implements Closeable {
                 commandOutput.close();
             } catch (IOException ex) {
             }
-        }
-        if (psSession != null) {
-            psSession.destroy();
         }
     }
 
@@ -205,13 +208,16 @@ public class PowerShell implements Closeable {
      * @throws IOException if an IOException occurred while reading the output
      * of the commands.
      * @throws IllegalStateException if this PowerShell session was already
-     * closed.
-     * @throws RuntimeException if the output stream ended too early, or if the
-     * current thread was interrupted while executing.
+     * closed, or the process or its output stream has terminated too early.
+     * @throws RuntimeException if the current thread was interrupted while
+     * executing.
      */
     public String executeCommands(String... commands) throws PowerShellExecutionException, IOException {
         if (closed) {
             throw new IllegalStateException("This PowerShell session has been closed.");
+        } else if (!psSession.isAlive()) {
+            close();
+            throw new IllegalStateException("The PowerShell process has terminated before it should.");
         }
 
         StringBuilder commandChainBuilder = new StringBuilder();
@@ -243,7 +249,8 @@ public class PowerShell implements Closeable {
              * circumstances. */
             Optional<String> optionalOutput = outputRecorder.consumeToNextDelimiter(END_OF_COMMAND + System.lineSeparator());
             if (!optionalOutput.isPresent()) {
-                throw new RuntimeException("PowerShell output stream ended too early.");
+                close();
+                throw new IllegalStateException("PowerShell output stream ended too early.");
             }
             String output = optionalOutput.get().replace(END_OF_COMMAND + System.lineSeparator(), "");
 

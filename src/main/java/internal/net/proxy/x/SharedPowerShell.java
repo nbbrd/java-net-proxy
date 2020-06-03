@@ -14,29 +14,30 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.net;
+package internal.net.proxy.x;
 
-import com.github.tuupertunut.powershelllibjava.PowerShell;
 import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+import net.jcip.annotations.ThreadSafe;
 
 /**
  *
  * @author Philippe Charles
  */
-public final class SinglePowerShell {
+@ThreadSafe
+public final class SharedPowerShell {
 
     private static final long MAIN_TIMEOUT_MILLIS = 1000 * 10;
     private static final int FALLBACK_MAX_INSTANCES = 3;
 
     private final ReentrantLock lock;
     private final Semaphore fallbackInstances;
-    private PowerShell ps;
+    private FixedPowerShell ps;
 
-    public SinglePowerShell() {
+    public SharedPowerShell() {
         this.lock = new ReentrantLock();
         this.fallbackInstances = new Semaphore(FALLBACK_MAX_INSTANCES);
         this.ps = null;
@@ -62,7 +63,7 @@ public final class SinglePowerShell {
     private String execOnMain(String cmd) throws IOException, PowerShellExecutionException {
         try {
             if (ps == null) {
-                ps = PowerShell.open();
+                ps = FixedPowerShell.open();
             } else {
             }
             return ps.executeCommands(cmd);
@@ -74,7 +75,7 @@ public final class SinglePowerShell {
 
     private String execOnFallback(String cmd) throws IOException, PowerShellExecutionException {
         if (fallbackInstances.tryAcquire()) {
-            try (PowerShell temp = PowerShell.open()) {
+            try (FixedPowerShell temp = FixedPowerShell.open()) {
                 return temp.executeCommands(cmd);
             } finally {
                 fallbackInstances.release();

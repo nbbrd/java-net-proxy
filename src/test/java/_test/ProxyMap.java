@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 National Bank of Belgium
+ * Copyright 2019 National Bank of Belgium
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,21 +14,34 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package _demo;
+package _test;
 
-import internal.net.proxy.x.WinPowerShellProxySelector;
+import java.io.IOException;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author Philippe Charles
  */
-public final class WinMapDemo {
+@lombok.Builder
+public final class ProxyMap extends ProxySelector {
 
-    public static void main(String[] args) throws URISyntaxException {
-        URI uri = new URI("https://www.nbb.be");
+    @lombok.Singular
+    private final Map<URI, Proxy> proxies;
 
-        System.out.println(new WinPowerShellProxySelector.GetSystemWebProxyCommand().apply(uri));
+    @Override
+    public List<Proxy> select(URI uri) {
+        Proxy result = proxies.get(uri);
+        return result != null ? Collections.singletonList(result) : Collections.emptyList();
+    }
+
+    @Override
+    public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
     }
 }

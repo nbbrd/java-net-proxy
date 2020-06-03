@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.net;
+package internal.net.proxy.x;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -22,8 +22,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.LongSupplier;
 import java.util.logging.Level;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -35,13 +35,13 @@ import javax.annotation.Nullable;
 @lombok.Builder(builderClassName = "Builder", toBuilder = true)
 public final class TtlCache<K, V> {
 
-    @Nonnull
+    @NonNull
     public static <K, V> TtlCache of() {
         return builder()
                 .minTtlInMillis(10)
                 .maxTtlInMillis(1000 * 60)
                 .ttlFactor(10)
-                .cache(new ConcurrentHashMap<>())
+                .storage(new ConcurrentHashMap<>())
                 .clock(System::currentTimeMillis)
                 .onEvent(TtlCache::logEvent)
                 .build();
@@ -50,15 +50,15 @@ public final class TtlCache<K, V> {
     private final long minTtlInMillis;
     private final long maxTtlInMillis;
     private final long ttlFactor;
-    private final ConcurrentMap<K, Entry<V>> cache;
+    private final ConcurrentMap<K, Entry<V>> storage;
     private final LongSupplier clock;
     private final BiConsumer<? super K, Event> onEvent;
     private final int evictThreshold = 1000;
 
     @Nullable
-    public V get(@Nonnull K key, @Nonnull Function<K, V> loader) {
+    public V get(@NonNull K key, @NonNull Function<K, V> loader) {
         long now = clock.getAsLong();
-        Entry<V> entry = cache.get(key);
+        Entry<V> entry = storage.get(key);
         if (entry != null) {
             if (!entry.hasExpired(now)) {
                 onEvent.accept(key, Event.HIT);
@@ -77,22 +77,22 @@ public final class TtlCache<K, V> {
         if (ttl >= minTtlInMillis) {
             onEvent.accept(key, miss ? Event.MISS_SLOW : Event.EXP_SLOW);
             evictExpiredEntries(after);
-            cache.put(key, new Entry<>(after + Math.min(maxTtlInMillis, ttl), result));
+            storage.put(key, new Entry<>(after + Math.min(maxTtlInMillis, ttl), result));
         } else {
             onEvent.accept(key, miss ? Event.MISS_FAST : Event.EXP_FAST);
             if (!miss) {
-                cache.remove(key);
+                storage.remove(key);
             }
         }
         return result;
     }
 
     private void evictExpiredEntries(long currentTimeInMillis) {
-        if (cache.size() > evictThreshold) {
-            cache.entrySet()
+        if (storage.size() > evictThreshold) {
+            storage.entrySet()
                     .stream()
                     .filter(o -> o.getValue().hasExpired(currentTimeInMillis))
-                    .forEach(cache::remove);
+                    .forEach(storage::remove);
         }
     }
 
