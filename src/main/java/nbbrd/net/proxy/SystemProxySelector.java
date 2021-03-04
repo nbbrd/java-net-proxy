@@ -27,9 +27,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
+
+import nbbrd.design.ThreadSafe;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
-import net.jcip.annotations.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 

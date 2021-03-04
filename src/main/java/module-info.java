@@ -18,8 +18,8 @@
 module nbbrd.net.proxy {
     requires static lombok;
     requires static nbbrd.service;
+    requires static nbbrd.design;
     requires static org.checkerframework.checker.qual;
-    requires static jcip.annotations;
 
     requires java.logging;
     requires com.github.tuupertunut.powershelllibjava;

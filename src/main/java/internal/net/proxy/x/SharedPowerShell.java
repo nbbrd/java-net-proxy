@@ -17,11 +17,12 @@
 package internal.net.proxy.x;
 
 import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;
+import nbbrd.design.ThreadSafe;
+
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
-import net.jcip.annotations.ThreadSafe;
 
 /**
  *
