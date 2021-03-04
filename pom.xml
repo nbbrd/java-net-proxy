@@ -274,6 +274,7 @@
                                         <CheckMavenCentral
                                                 implementation="org.kordamp.maven.enforcer.checker.CheckMavenCentral">
                                             <release>false</release>
+                                            <strict>false</strict>
                                         </CheckMavenCentral>
                                     </rules>
                                 </configuration>
