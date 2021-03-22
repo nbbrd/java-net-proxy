@@ -4,7 +4,7 @@
 
     <groupId>com.github.nbbrd.java-net-proxy</groupId>
     <artifactId>java-net-proxy</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>java-net-proxy</name>
