@@ -16,6 +16,7 @@
  */
 package internal.net.proxy.x;
 
+import com.github.tuupertunut.powershelllibjava.PowerShell;
 import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;
 import nbbrd.design.ThreadSafe;
 
@@ -36,7 +37,7 @@ public final class SharedPowerShell {
 
     private final ReentrantLock lock;
     private final Semaphore fallbackInstances;
-    private FixedPowerShell ps;
+    private PowerShell ps;
 
     public SharedPowerShell() {
         this.lock = new ReentrantLock();
@@ -64,7 +65,7 @@ public final class SharedPowerShell {
     private String execOnMain(String cmd) throws IOException, PowerShellExecutionException {
         try {
             if (ps == null) {
-                ps = FixedPowerShell.open();
+                ps = PowerShell.open();
             } else {
             }
             return ps.executeCommands(cmd);
@@ -76,7 +77,7 @@ public final class SharedPowerShell {
 
     private String execOnFallback(String cmd) throws IOException, PowerShellExecutionException {
         if (fallbackInstances.tryAcquire()) {
-            try (FixedPowerShell temp = FixedPowerShell.open()) {
+            try (PowerShell temp = PowerShell.open()) {
                 return temp.executeCommands(cmd);
             } finally {
                 fallbackInstances.release();
