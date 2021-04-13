@@ -32,7 +32,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @param <V>
  */
 @lombok.extern.java.Log
-@lombok.Builder(builderClassName = "Builder", toBuilder = true)
+@lombok.Builder(toBuilder = true)
 public final class TtlCache<K, V> {
 
     @NonNull
