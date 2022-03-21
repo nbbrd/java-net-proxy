@@ -19,7 +19,7 @@ package internal.net.proxy.x;
 import java.util.ServiceLoader;
 import nbbrd.net.proxy.SystemProxySelector;
 import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
