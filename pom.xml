@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.nbbrd.java-net-proxy</groupId>
@@ -17,7 +18,7 @@
             <url>https://joinup.ec.europa.eu/page/eupl-text-11-12</url>
         </license>
     </licenses>
-    
+
     <developers>
         <developer>
             <name>Philippe Charles</name>
@@ -71,7 +72,7 @@
         <dependency>
             <groupId>org.checkerframework</groupId>
             <artifactId>checker-qual</artifactId>
-            <version>3.21.3</version>
+            <version>3.21.4</version>
             <scope>provided</scope>
         </dependency>
 
@@ -81,7 +82,7 @@
             <artifactId>powershell-lib-java</artifactId>
             <version>2.0.0</version>
         </dependency>
-                
+
         <!-- test only -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -108,7 +109,7 @@
             <properties>
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
                 <maven.compiler.target>1.8</maven.compiler.target>
-                <maven.compiler.source>1.8</maven.compiler.source>                
+                <maven.compiler.source>1.8</maven.compiler.source>
             </properties>
             <build>
                 <plugins>
@@ -156,13 +157,10 @@
                     </dependency>
                     <dependency>
                         <groupId>com.github.nbbrd.java-service-util</groupId>
-                        <artifactId>java-service-annotation</artifactId>
+                        <artifactId>java-service-bom</artifactId>
                         <version>${java-service.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.github.nbbrd.java-service-util</groupId>
-                        <artifactId>java-service-processor</artifactId>
-                        <version>${java-service.version}</version>
+                        <type>pom</type>
+                        <scope>import</scope>
                     </dependency>
                     <dependency>
                         <groupId>com.github.nbbrd.java-design-util</groupId>
@@ -204,7 +202,7 @@
                 </plugins>
             </build>
         </profile>
-                
+
         <!-- Run Java8 build with JPMS on JDK9+ -->
         <profile>
             <id>java8-with-jpms</id>
@@ -214,7 +212,7 @@
             <properties>
                 <!-- Fix NetBeans bug with test packages -->
                 <maven.compiler.target>9</maven.compiler.target>
-                <maven.compiler.source>9</maven.compiler.source>                
+                <maven.compiler.source>9</maven.compiler.source>
             </properties>
             <build>
                 <plugins>
@@ -270,7 +268,7 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>        
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -380,20 +378,20 @@
                 <plugins>
                     <plugin>
                         <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId> 
-                        <version>0.8.7</version> 
-                        <executions> 
-                            <execution> 
-                                <goals> 
-                                    <goal>prepare-agent</goal> 
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.8.7</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>prepare-agent</goal>
                                 </goals>
                             </execution>
-                            <execution> 
-                                <id>report</id> 
-                                <phase>prepare-package</phase> 
-                                <goals> 
-                                    <goal>report</goal> 
-                                </goals> 
+                            <execution>
+                                <id>report</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
