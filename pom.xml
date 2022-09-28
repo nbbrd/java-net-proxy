@@ -600,7 +600,6 @@
                                     <goal>extract</goal>
                                 </goals>
                                 <configuration>
-                                    <inputFile>${project.parent.basedir}/CHANGELOG.md</inputFile>
                                     <ref>${project.version}</ref>
                                 </configuration>
                             </execution>
