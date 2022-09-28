@@ -599,9 +599,6 @@
                                 <goals>
                                     <goal>extract</goal>
                                 </goals>
-                                <configuration>
-                                    <ref>${project.version}</ref>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
