@@ -1,23 +1,24 @@
 /*
  * Copyright 2018 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package _test;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -25,7 +26,6 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 /**
- *
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor
@@ -81,6 +81,6 @@ public final class LogCollector implements List<LogRecord>, AutoCloseable {
     }
 
     public static String getFormattedMessage(LogRecord o) {
-        return MessageFormat.format(o.getMessage(), o.getParameters());
+        return new MessageFormat(o.getMessage(), Locale.ROOT).format(o.getParameters());
     }
 }
