@@ -18,6 +18,12 @@ package nbbrd.net.proxy;
 
 import internal.net.proxy.FailsafeSystemProxySpi;
 import internal.net.proxy.SystemProxySpiLoader;
+import lombok.NonNull;
+import nbbrd.design.ThreadSafe;
+import nbbrd.service.Quantifier;
+import nbbrd.service.ServiceDefinition;
+import org.jspecify.annotations.Nullable;
+
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.ProxySelector;
@@ -28,11 +34,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 
-import nbbrd.design.ThreadSafe;
-import nbbrd.service.Quantifier;
-import nbbrd.service.ServiceDefinition;
-import lombok.NonNull;
-import org.jspecify.annotations.Nullable;
+import static java.util.stream.Collectors.toList;
 
 /**
  *
@@ -45,7 +47,7 @@ public final class SystemProxySelector extends ProxySelector {
     @NonNull
     public static SystemProxySelector ofServiceLoader() {
         return builder()
-                .providers(new SystemProxySpiLoader().get())
+                .providers(SystemProxySpiLoader.load().stream().map(FailsafeSystemProxySpi::wrap).collect(toList()))
                 .systemProperties(System::getProperty)
                 .fallback(ProxySelector.getDefault())
                 .build();
@@ -96,7 +98,6 @@ public final class SystemProxySelector extends ProxySelector {
     @ThreadSafe
     @ServiceDefinition(
             quantifier = Quantifier.MULTIPLE,
-            wrapper = FailsafeSystemProxySpi.class,
             loaderName = "internal.net.proxy.SystemProxySpiLoader")
     public interface Spi {
 
