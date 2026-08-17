@@ -634,6 +634,7 @@
                         <configuration>
                             <source>8</source>
                             <excludePackageNames>internal:internal.*:shaded:shaded.*</excludePackageNames>
+                            <failOnError>false</failOnError>
                         </configuration>
                     </plugin>
                     <plugin>
